@@ -5,8 +5,9 @@ public class Inventory : MonoBehaviour
 {
     public int coinsCount;
 
-    public static Inventory instance;
     public Text coinsCountText;
+
+    public static Inventory instance;
 
     private void Awake()
     {

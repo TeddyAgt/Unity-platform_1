@@ -14,6 +14,19 @@ public class PlayerHealth : MonoBehaviour
 
     public SpriteRenderer graphics;
 
+    public static PlayerHealth instance;
+
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogWarning("Il y a plus d'une instance de PlayerHealth dans le scène");
+            return;
+        }
+
+        instance = this;
+    }
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -38,6 +51,17 @@ public class PlayerHealth : MonoBehaviour
             StartCoroutine(InvincibilityFlash());
             StartCoroutine(HandleInvicibilityDelay());
         }
+    }
+
+    public void HealPlayer(int amount)
+    {
+        currentHealth += amount;
+
+        if (currentHealth < maxHealth) {
+            currentHealth = maxHealth;
+        }
+
+        healthBar.SetHealth(currentHealth);
     }
 
     public IEnumerator InvincibilityFlash()
