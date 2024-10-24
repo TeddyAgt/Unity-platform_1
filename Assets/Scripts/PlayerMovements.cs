@@ -3,12 +3,15 @@ using UnityEngine;
 public class PlayerMovements : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed;
+    public float climbSpeed;
     [SerializeField] private Rigidbody2D _rb;
     [SerializeField] private float _jumpForce;
 
     private Vector3 _velocity = Vector3.zero;
     private bool _isJumping;
     private bool _isGrounded;
+    [HideInInspector]
+    public bool isClimbing;
 
     public Transform groundCheck;
     public float groundCheckRadius;
@@ -17,6 +20,7 @@ public class PlayerMovements : MonoBehaviour
     public SpriteRenderer spriteRenderer;
 
     private float horizontalMovement;
+    private float verticalMovement;
 
     public void Update()
     {
@@ -29,25 +33,35 @@ public class PlayerMovements : MonoBehaviour
 
         float characterVelocity = Mathf.Abs(_rb.velocity.x);
         animator.SetFloat("Speed", characterVelocity);
+        animator.SetBool("isClimbing", isClimbing);
     }
 
     public void FixedUpdate()
     {
         horizontalMovement = Input.GetAxis("Horizontal") * _moveSpeed * Time.deltaTime;
+        verticalMovement = Input.GetAxis("Vertical") * climbSpeed * Time.deltaTime;
         _isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, collisionLayers);
-        MovePlayer(horizontalMovement);
+        MovePlayer(horizontalMovement, verticalMovement);
     }
 
-    public void MovePlayer(float _horizontalMovement)
+    public void MovePlayer(float _horizontalMovement, float _verticalMovement)
     {
-        Vector3 targetVelocity = new Vector2(_horizontalMovement, _rb.velocity.y);
-        _rb.velocity = Vector3.SmoothDamp(_rb.velocity, targetVelocity, ref _velocity, 0.05f);
-
-        if (_isJumping == true)
+        if (!isClimbing)
         {
-            _rb.AddForce(new Vector2(0f, _jumpForce));
-            _isJumping = false;
+            Vector3 targetVelocity = new Vector2(_horizontalMovement, _rb.velocity.y);
+            _rb.velocity = Vector3.SmoothDamp(_rb.velocity, targetVelocity, ref _velocity, 0.05f);
+
+            if (_isJumping)
+            {
+                _rb.AddForce(new Vector2(0f, _jumpForce));
+                _isJumping = false;
+            }
+        } else
+        {
+            Vector3 targetVelocity = new Vector2(0, _verticalMovement);
+            _rb.velocity = Vector3.SmoothDamp(_rb.velocity, targetVelocity, ref _velocity, 0.05f);
         }
+        
     }
 
     public void Flip(float _velocity)
