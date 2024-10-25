@@ -4,7 +4,7 @@ public class PlayerMovements : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed;
     public float climbSpeed;
-    [SerializeField] private Rigidbody2D _rb;
+    public Rigidbody2D _rb;
     [SerializeField] private float _jumpForce;
 
     private Vector3 _velocity = Vector3.zero;
@@ -18,9 +18,23 @@ public class PlayerMovements : MonoBehaviour
     public LayerMask collisionLayers;
     public Animator animator;
     public SpriteRenderer spriteRenderer;
+    public CapsuleCollider2D playerCollider;
 
     private float horizontalMovement;
     private float verticalMovement;
+
+    public static PlayerMovements instance;
+
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogWarning("Il y a plus d'une instance de PlayerMovements dans le scène");
+            return;
+        }
+
+        instance = this;
+    }
 
     public void Update()
     {
