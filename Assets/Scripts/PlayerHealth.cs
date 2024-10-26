@@ -37,7 +37,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.H)) 
         {
-            TakeDamage(60);
+            TakeDamage(100);
         } 
     }
 
@@ -77,6 +77,18 @@ public class PlayerHealth : MonoBehaviour
         PlayerMovements.instance.animator.SetTrigger("Die");
         PlayerMovements.instance._rb.bodyType = RigidbodyType2D.Kinematic;
         PlayerMovements.instance.playerCollider.enabled = false;
+        GameOverManager.instance.OnPlayerDeath();
+
+    }
+
+    public void Respawn()
+    {
+        PlayerMovements.instance.enabled = true;
+        PlayerMovements.instance.animator.SetTrigger("Respawn");
+        PlayerMovements.instance._rb.bodyType = RigidbodyType2D.Dynamic;
+        PlayerMovements.instance.playerCollider.enabled = true;
+        currentHealth = maxHealth;
+        healthBar.SetHealth(currentHealth);
     }
 
     public IEnumerator InvincibilityFlash()

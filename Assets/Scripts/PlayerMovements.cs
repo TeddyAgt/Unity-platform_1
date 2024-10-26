@@ -38,7 +38,10 @@ public class PlayerMovements : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetButtonDown("Jump") && _isGrounded)
+        horizontalMovement = Input.GetAxis("Horizontal") * _moveSpeed * Time.fixedDeltaTime;
+        verticalMovement = Input.GetAxis("Vertical") * climbSpeed * Time.fixedDeltaTime;
+
+        if (Input.GetButtonDown("Jump") && _isGrounded && !isClimbing)
         {
             _isJumping = true;
         }
@@ -52,8 +55,6 @@ public class PlayerMovements : MonoBehaviour
 
     public void FixedUpdate()
     {
-        horizontalMovement = Input.GetAxis("Horizontal") * _moveSpeed * Time.deltaTime;
-        verticalMovement = Input.GetAxis("Vertical") * climbSpeed * Time.deltaTime;
         _isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, collisionLayers);
         MovePlayer(horizontalMovement, verticalMovement);
     }
